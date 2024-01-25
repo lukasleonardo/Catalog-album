@@ -1,0 +1,35 @@
+{
+  "name": "catalog-album",
+  "version": "1.0.0",
+  "description": "api de cadastro de albums",
+  "main": "index.js",
+  "scripts": {
+    "test": "run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasleonardo/catalog-album.git"
+  },
+  "keywords": [
+    "api",
+    "node",
+    "auth",
+    "express"
+  ],
+  "author": "Lucas Henrique",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lukasleonardo/catalog-album/issues"
+  },
+  "homepage": "https://github.com/lukasleonardo/catalog-album#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
