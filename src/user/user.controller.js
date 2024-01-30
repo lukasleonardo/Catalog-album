@@ -1,18 +1,55 @@
 const router = require('express').Router()
-const User = require('../model/user')
 const userService = require('./user.service')
+const {notFoundException, duplicateKeyException} = require('../utils/httpError')
 
-router.get('/',(req,res)=>{
-  userService.getUsers()
+
+
+//get all
+router.get('/',async (req,res)=>{
+  const users = await userService.getUsers()
+  if(users.length == 0){res.send('No users found!')}
+  res.send(users)
+})
+//getbyUsername
+router.get('/:username',async ( req,res)=>{
+  const user = await userService.findOneUser(req.params.username)
+  if(!user){
+    const erro = new notFoundException('User not found!') 
+    res.status(erro.code).send(erro.message)
+  }
+  res.send(user)
 })
 
-router.post('/',(req,res)=>{
-  userService.createUser(req.body)
+//create
+router.post('/',async (req,res)=>{
+  const user = await userService.findOneUser(req.body.username)
+  if(user){
+    const erro = new duplicateKeyException('User already exists!') 
+    res.status(erro.code).send(erro.message)
+  }
+  res.send(await userService.createUser(req.body))
 })
-
-router.post('/', 
-  function(req, res) {
-    res.redirect('/');
-  });
+//login
+router.post('/login',async (req,res)=>{
+  res.send(await userService.login(req.body.username, req.body.password))
+})
+// update
+router.put('/:username', async (req,res)=>{
+  const user = await userService.findOneUser(req.params.username)
+  if(!user){
+    const erro = new notFoundException('User not found!') 
+    res.status(erro.code).send(erro.message)
+  }
+  res.send(await userService.updateUser(user.id, req.body))
+});
+// delete
+router.delete('/:username', async (req,res)=>{
+  const user = await userService.findOneUser(req.params.username)
+  if(!user){
+    const erro = new notFoundException('User not found!') 
+    res.status(erro.code).send(erro.message)
+  }
+  res.send(await userService.deleteUser(user.id))
+});
 
 module.exports = router

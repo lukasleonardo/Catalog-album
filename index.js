@@ -1,11 +1,14 @@
 //environment variables
-require('dotenv').config() 
+require('dotenv').config()
+
 //express initialization
 const express = require('express')
 const app = express()
 //routers
 const albumRouter = require('./src/album/album.controller')
 const userRouter = require('./src/user/user.controller')
+//error lib
+const {httpError, logError} = require('./src/utils/httpError') 
 //mongodb connection
 const connectDatabase = require('./src/database/database')
 //strategy e session
@@ -22,8 +25,8 @@ app.use(bodyParser.json())
 //auth middleware
 function authMiddleware(req,res,next){
   if(req.isAuthenticated()){return next()}
-  res.send('falha na autenticação')
-
+  const err =  new errors.forbiddenException('Authentication failed')
+  res.send(err)
 }
 
 //session definition
@@ -38,13 +41,10 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 //routes
-app.use('/user',authMiddleware,userRouter)
-app.use('/album',authMiddleware,albumRouter)
+app.use('/user',/*authMiddleware*/userRouter)
+app.use('/album',/*authMiddleware*/albumRouter)
 
-//home
-app.get('/', (req,res)=>{
-  res.send('oi')
-})
+
 
 app.listen(process.env.PORT, ()=>{
   console.log('servidor rodando na porta: '+ process.env.PORT)

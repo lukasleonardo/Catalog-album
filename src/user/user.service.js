@@ -1,22 +1,34 @@
 const User = require('../model/user')
-
+var passport = require('passport')
 class userService{
-  async getUsers(){
-    const users = await User.find()
+
+  createUser(user){
+   const newUser = User.create(user)
+    return newUser 
+  }
+
+
+  getUsers(){
+    const users = User.find()
     return users
   }
   
-  async createUser(user){
-    const newUser = await User.create(user)
+
+  findOneUser(username){
+    const newUser = User.findOne({username:username})
     return newUser 
   }
 
-  async findOneUser(username){
-    const newUser = await User.find({username:username})
-    return newUser 
+  updateUser(id,update){
+    const uptUser = User.findByIdAndUpdate(id, update)
+    return uptUser
   }
 
-  async login(username,password){
+  deleteUser(id){
+    return User.findByIdAndDelete(id)
+  }
+
+  login(username,password){
     passport.authenticate('local', { failureRedirect: '/login' })
   }
 }
