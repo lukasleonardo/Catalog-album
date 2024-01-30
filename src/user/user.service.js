@@ -10,6 +10,15 @@ class userService{
     const newUser = await User.create(user)
     return newUser 
   }
+
+  async findOneUser(username){
+    const newUser = await User.find({username:username})
+    return newUser 
+  }
+
+  async login(username,password){
+    passport.authenticate('local', { failureRedirect: '/login' })
+  }
 }
 
 module.exports = new userService()

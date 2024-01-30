@@ -1,14 +1,18 @@
-const express = 'express'
-const router = express.Router()
+const router = require('express').Router()
 const User = require('../model/user')
 const userService = require('./user.service')
 
-router.get('/users',(req,res)=>{
+router.get('/',(req,res)=>{
   userService.getUsers()
 })
 
-router.post('/users',(req,res)=>{
+router.post('/',(req,res)=>{
   userService.createUser(req.body)
 })
+
+router.post('/', 
+  function(req, res) {
+    res.redirect('/');
+  });
 
 module.exports = router
