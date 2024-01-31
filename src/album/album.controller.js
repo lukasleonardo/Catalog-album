@@ -1,29 +1,73 @@
 const router = require('express').Router()
-const connection = require('../database/database')
+const { existsException, notFoundException } = require('../utils/httpError')
 const albumService = require('./album.service')
 
 //get all
 router.get('/',async (req,res)=>{
   const albums = await albumService.getAlbums()
+  if(albums.lenght == 0){res.send('No albums found')}
   res.send(albums)
 })
-//getbyUsername
-router.get('/:username',async (req,res)=>{
-  const user = await albumService.getAlbum(req.params.username)
-  res.send(user)
+//getbyname
+router.get('/:name',async (req,res)=>{
+  const albumName = req.params.name
+  const albums = await albumService.getAlbumsByName(albumName)
+  if(albums.lenght == 0){res.send('No albums found')}
+  res.send(albums)
 })
+
 //create
 router.post('/',async (req,res)=>{
-  res.send(await albumService.createUser(req.body))
+  
+  const albumDto = {
+    name:req.body.name,
+    artist:req.body.artist, 
+    songs:{title:req.body.title,genre:req.body.genre,duration:req.body.duration},
+    year:req.body.year,
+    createdBy:req.session
+  }
+  const exists = await albumService.findAlbum(albumDto.name, albumDto.artist)
+  if(exists){
+    const erro = new existsException('Item already exists')
+    res.status(erro.code).send(erro.message)
+  }
+  const album = await albumService.createAlbum(albumDto)
+  res.send(album)
 })
 
 // update
 router.put('/:id', async (req,res)=>{
-  res.send(await albumService.updateUser(req.params.id))
+  const albumId= req.params.id
+  const albumDto = {
+    name:req.body.name,
+    artist:req.body.artist, 
+    songs:{title:req.body.title,genre:req.body.genre,duration:req.body.duration},
+    year:req.body.year,
+  }
+  const album = albumService.findById(albumId)
+
+  if(!album){
+    const erro = new notFoundException('No album found!')
+    res.status(erro.code).send(erro.message)
+  }
+
+  res.send(await albumService.updateAlbum(album))
 });
 // delete
 router.delete('/:id', async (req,res)=>{
-  res.send(await albumService.deleteUser(req.params.id))
+  const albumId= req.params.id
+  const albumDto = {
+    name:req.body.name,
+    artist:req.body.artist, 
+    songs:{title:req.body.title,genre:req.body.genre,duration:req.body.duration},
+    year:req.body.year,
+  }
+  const album = albumService.findById(albumId)
+  if(!album){
+    const erro = new notFoundException('No album found!')
+    res.status(erro.code).send(erro.message)
+  }
+  res.send(await albumService.deleteUser(albumDto))
 });
 
 module.exports = router

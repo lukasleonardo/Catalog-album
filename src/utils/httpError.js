@@ -25,4 +25,12 @@ class httpError{}
     }
   }
 
-module.exports = { httpError, forbiddenException, notFoundException, duplicateKeyException}
+  class existsException extends httpError{
+    constructor(message,stack=null){
+      super()
+      this.code = 409
+      this.message = message
+      this.stack = stack
+    }
+  }
+module.exports = { httpError, existsException, forbiddenException, notFoundException, duplicateKeyException}
