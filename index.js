@@ -7,28 +7,19 @@ const app = express()
 //routers
 const albumRouter = require('./src/album/album.controller')
 const userRouter = require('./src/user/user.controller')
+const authRouter = require('./src/auth/auth.controller')
 //error lib
-const {httpError, logError} = require('./src/utils/httpError') 
+const erro = require('./src/utils/httpError') 
 //mongodb connection
 const connectDatabase = require('./src/database/database')
 //strategy e session
 var passport = require('passport')
 var session = require('express-session');
-require('./src/auth/local_strategy')(passport)
-
+require('./src/auth/basic_strategy')(passport)
 //body parser to deal with json
 const bodyParser = require('body-parser')
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
-//auth middleware
-function authMiddleware(req,res,next){
-  if(req.isAuthenticated()){return next()}
-  const err =  new errors.forbiddenException('Authentication failed')
-  res.send(err)
-}
-
 //session definition
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -39,10 +30,12 @@ app.use(session({
 }));
 app.use(passport.initialize())
 app.use(passport.session())
-
+//auth middleware
+const basicMiddleware = passport.authenticate('basic',{session:false})
 //routes
-app.use('/user',/*authMiddleware*/userRouter)
-app.use('/album',/*authMiddleware*/albumRouter)
+app.use('/login',authRouter)
+app.use('/user',basicMiddleware,userRouter)
+app.use('/album',basicMiddleware,albumRouter)
 
 
 

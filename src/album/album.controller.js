@@ -51,7 +51,7 @@ router.put('/:id', async (req,res)=>{
     res.status(erro.code).send(erro.message)
   }
 
-  res.send(await albumService.updateAlbum(album))
+  res.send(await albumService.updateAlbum(album.id,albumDto))
 });
 // delete
 router.delete('/:id', async (req,res)=>{

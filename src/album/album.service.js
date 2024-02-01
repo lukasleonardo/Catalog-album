@@ -34,13 +34,13 @@ class albumService{
     return album
   }
   
-  updateAlbum(album){
-    const uptAlbum = Album.findByIdAndUpdate(album.id,album)
+  updateAlbum(album, albumDto){
+    const uptAlbum = Album.findByIdAndUpdate(album.id,albumDto)
     return uptAlbum
   }
 
   updateAlbum(album){
-    const uptAlbum = Album.findByIdAndDelete(album.id,album)
+    const uptAlbum = Album.findByIdAndDelete(album.id)
     return uptAlbum
   }
 

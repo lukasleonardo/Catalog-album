@@ -27,12 +27,15 @@ router.post('/',async (req,res)=>{
     const erro = new duplicateKeyException('User already exists!') 
     res.status(erro.code).send(erro.message)
   }
-  res.send(await userService.createUser(req.body))
+  const userDto ={
+    name:req.body.name,
+    username:req.body.username,
+    password:req.body.password,
+    email:req.body.email
+  }
+  res.send(await userService.createUser(userDto))
 })
-//login
-router.post('/login',async (req,res)=>{
-  res.send(await userService.login(req.body.username, req.body.password))
-})
+
 // update
 router.put('/:username', async (req,res)=>{
   const user = await userService.findOneUser(req.params.username)
@@ -52,4 +55,11 @@ router.delete('/:username', async (req,res)=>{
   res.send(await userService.deleteUser(user.id))
 });
 
+
+// router.post('/login',async(req,res)=>{
+//   const username = req.body.username
+//   const password = req.body.password
+//   const result = await userService.login(username,password)
+//   res.send(result)
+// })
 module.exports = router

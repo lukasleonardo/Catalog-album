@@ -1,7 +1,8 @@
 const User = require('../user/user.service')
 var passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
-const bcrypt = require('bcrypt')
+const BasicStrategy = require('passport-http').BasicStrategy;
+const bcrypt = require('bcrypt');
+const userService = require('../user/user.service');
 
 module.exports = function(passport){
   passport.serializeUser((user,done)=>{
@@ -20,23 +21,23 @@ module.exports = function(passport){
 }
 
 
-passport.use(new LocalStrategy({
+passport.use(new BasicStrategy({
   usernameField:'username',
   passwordField:'password'
 },
-  function(username, password, done) {
-    User.findOneUser({ username: username }, function (err, user) {
+  async function(username, password, done) {  
       try{
-        if (!user) { return done(null, false); }
+        const user = await userService.findOneUser(username)
+        if (!user) { return done(null, false,{message:'usuario não encontrado'}); }
         if (!bcrypt.compareSync(password, user.password)){
-          return done(null,false)
+          return done(null,false,{message:'Senah incorreta'})
         }
         return done(null,user)
       }catch(err){
         console.log(err)
         return done(err,false)
       }
-    });
+    
   }
 
-));
+))

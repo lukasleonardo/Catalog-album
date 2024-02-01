@@ -1,9 +1,18 @@
 const User = require('../model/user')
 var passport = require('passport')
+const bcrypt = require('bcrypt');
 class userService{
 
   createUser(user){
-   const newUser = User.create(user)
+    const {name,password,username,email} = user
+    const saltRounds = 10
+    const createUser = {
+      name:name,
+      password: bcrypt.hashSync(password,saltRounds),
+      username:username,
+      email:email
+    }
+    const newUser = User.create(createUser)
     return newUser 
   }
 
@@ -28,9 +37,24 @@ class userService{
     return User.findByIdAndDelete(id)
   }
 
-  login(username,password){
-    passport.authenticate('local', { failureRedirect: '/login' })
-  }
+  async login(username,password){
+    const user = await User.findOne({username:username})
+    const res = await this.verify(password, user)
+    return res
 }
 
+
+  verify(password,user) {
+    if (!user) { return false;}
+    if (!bcrypt.compareSync(password, user.password)){
+      console.log("falha ao logar")
+    return  false}
+    return user
+  }
+
+
+
+
+
+}
 module.exports = new userService()
