@@ -1,19 +1,19 @@
-const {Schema, model, models, Types} = require('mongoose')
+const {Schema, model, models} = require('mongoose')
 
 const AlbumSchema = new Schema({
   name:{
     type:String,
-    required:[true,'Album name is required']
+    //required:[true,'Album name is required']
   },
   artist:{
     type:String,
-    required:[true,'Artist name is required']
+    //required:[true,'Artist name is required']
   },
   songs:[
     {titulo:
       {
       type:String,
-      required:[true,'Name of the song is required']
+      //required:[true,'Name of the song is required']
     },
     genre:{type:String},
     duration:{
@@ -24,7 +24,7 @@ const AlbumSchema = new Schema({
     type:String
   },
   createdBy:{
-    type:Types.ObjectId,
+    type:String,
     ref:'User'    
   }
 })

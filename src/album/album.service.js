@@ -39,11 +39,11 @@ class albumService{
     return uptAlbum
   }
 
-  updateAlbum(album){
-    const uptAlbum = Album.findByIdAndDelete(album.id)
+  deleteAlbum(id){
+    const uptAlbum = Album.findByIdAndDelete(id)
     return uptAlbum
   }
 
 }
 
-module.exports = albumService
+module.exports = new albumService()
